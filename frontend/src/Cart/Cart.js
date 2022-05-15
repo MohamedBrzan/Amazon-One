@@ -8,7 +8,12 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeAllCart, removeItem } from '../store/reducers/reducers';
+import {
+  decreaseItem,
+  increaseItem,
+  removeAllCart,
+  removeItem,
+} from '../store/reducers/reducers';
 import './Cart.css';
 import { Link } from 'react-router-dom';
 
@@ -67,7 +72,23 @@ const Cart = () => {
                           {item.product.name}
                         </Link>
                       </td>
-                      <td>{item.quantity}</td>
+                      <td>
+                        <Button
+                          className='btn-dark'
+                          onClick={() => dispatch(increaseItem(item.product))}
+                        >
+                          <i className='fa-solid fa-square-plus'></i>
+                        </Button>
+
+                        <span className='py-2 px-3'>{item.quantity}</span>
+
+                        <Button
+                          className='btn-dark'
+                          onClick={() => dispatch(decreaseItem(item.product))}
+                        >
+                          <i className='fa-solid fa-square-minus'></i>
+                        </Button>
+                      </td>
                       <td>{formatter(item.product.price)}</td>
                       <td>{formatter(item.product.price * item.quantity)}</td>
                       <td>
@@ -101,11 +122,11 @@ const Cart = () => {
             <Card>
               <ListGroup variant='flush'>
                 <ListGroup.Item>
-                  <Card.Title>Total</Card.Title>
+                  <Card.Title>Subtotal</Card.Title>
                 </ListGroup.Item>
 
                 <Card.Body>
-                  <ListGroup.Item>
+                  <ListGroup.Item className='bg-warning'>
                     <Card.Text>
                       <strong>{formatter(Total)}</strong>
                     </Card.Text>

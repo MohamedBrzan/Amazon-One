@@ -6,4 +6,9 @@
 .cart .img-handle img {
   width: 100%;
   height: 100%;
+}
+.cart .handle-input {
+  width: 50px;
+  display: inline-block;
+  margin: auto;
 }/*# sourceMappingURL=Cart.css.map */
