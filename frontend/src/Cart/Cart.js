@@ -16,6 +16,7 @@ import {
 } from '../store/reducers/reducers';
 import './Cart.css';
 import { Link } from 'react-router-dom';
+import PageTitle from '../utils/PageTitle';
 
 const Cart = () => {
   const { cartItems } = useSelector((state) => state.cart);
@@ -33,6 +34,8 @@ const Cart = () => {
 
   return (
     <Container className='mt-5 cart'>
+      {' '}
+      <PageTitle title='Cart' />
       <Row>
         <Col md={6} lg={8}>
           {cartItems.length ? (
@@ -133,7 +136,10 @@ const Cart = () => {
                       <strong>{formatter(Total)}</strong>
                     </Card.Text>
                   </ListGroup.Item>
-                  <Button className='btn-warning mt-5 m-auto d-block'>
+                  <Button
+                    className='btn-warning mt-5 m-auto d-block'
+                    href='/login'
+                  >
                     proceed to checkout
                   </Button>
                 </Card.Body>

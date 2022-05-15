@@ -11,3 +11,4 @@
 5. handle error message with all fetching data
 6. create cart component
 7. handled actions (increase and decrease)
+8. handle login page
