@@ -1,0 +1,17 @@
+.products {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .product {
+    border: 1px solid #000;
+    margin: 5px;
+    img {
+      width: 100%;
+      max-width: 400px;
+      max-height: 300px;
+    }
+    .product-info {
+      padding: 1rem;
+    }
+  }
+}
