@@ -35,6 +35,7 @@ export const cartSlice = createSlice({
       cartItems[findItemIndex].quantity += 1;
       localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
     },
+
     decreaseItem: (state, action) => {
       const product = action.payload;
       const cartItems = state.cartItems;

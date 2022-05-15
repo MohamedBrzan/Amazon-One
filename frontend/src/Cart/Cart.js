@@ -75,6 +75,7 @@ const Cart = () => {
                       <td>
                         <Button
                           className='btn-dark'
+                          disabled={item.quantity >= item.product.countInStock}
                           onClick={() => dispatch(increaseItem(item.product))}
                         >
                           <i className='fa-solid fa-square-plus'></i>
@@ -84,6 +85,7 @@ const Cart = () => {
 
                         <Button
                           className='btn-dark'
+                          disabled={item.quantity === 1}
                           onClick={() => dispatch(decreaseItem(item.product))}
                         >
                           <i className='fa-solid fa-square-minus'></i>
@@ -113,7 +115,7 @@ const Cart = () => {
             </>
           ) : (
             <ErrorMessage variant='warning'>
-              no cart items available .
+              no cart items available . <Link to='/'>go to shopping</Link>
             </ErrorMessage>
           )}
         </Col>
@@ -131,6 +133,9 @@ const Cart = () => {
                       <strong>{formatter(Total)}</strong>
                     </Card.Text>
                   </ListGroup.Item>
+                  <Button className='btn-warning mt-5 m-auto d-block'>
+                    proceed to checkout
+                  </Button>
                 </Card.Body>
               </ListGroup>
             </Card>

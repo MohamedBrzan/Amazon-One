@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { addToCart } from '../../../store/reducers/reducers';
 
@@ -11,6 +11,10 @@ const ProductCard = ({ product }) => {
     currency: 'USD',
     maximumFractionDigits: 2,
   }).format;
+
+  const { cartItems } = useSelector((state) => state.cart);
+
+  const find = cartItems.find((item) => item.product._id === product._id);
 
   return (
     <div className='product'>
@@ -41,6 +45,7 @@ const ProductCard = ({ product }) => {
           <Button
             className='btn-warning'
             onClick={() => dispatch(addToCart(product))}
+            disabled={find && find.quantity >= product.countInStock}
           >
             buy now
           </Button>
