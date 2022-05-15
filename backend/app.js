@@ -6,6 +6,8 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const ProductRoutes = require('./routes/ProductRoutes');
+const UserRoutes = require('./routes/UserRoutes');
+
 dotenv.config({ path: 'config/.env' });
 
 const app = express();
@@ -17,5 +19,6 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use('/api/v1', ProductRoutes);
+app.use('/api/v1', UserRoutes);
 
 module.exports = app;
