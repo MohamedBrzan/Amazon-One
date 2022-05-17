@@ -11,7 +11,7 @@ DBConnections();
 
 // MiddleWare Error Message
 app.use((err, req, res, next) => {
-  res.status(500).json({ MiddlewareError: err.message });
+  res.status(500).json({ Error: err.message });
 });
 
 app.listen(process.env.PORT || 4000, () => {

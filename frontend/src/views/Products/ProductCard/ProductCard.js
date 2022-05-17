@@ -41,11 +41,16 @@ const ProductCard = ({ product }) => {
               <small>will be available soon!</small>
             </ListGroup.Item>
           </ListGroup>
+        ) : find && find.quantity >= product.countInStock ? (
+          <small className='text-danger'>will be available soon!</small>
         ) : (
           <Button
-            className='btn-warning'
+            className={
+              find && find.quantity >= product.countInStock
+                ? 'btn-danger'
+                : 'btn-warning'
+            }
             onClick={() => dispatch(addToCart(product))}
-            disabled={find && find.quantity >= product.countInStock}
           >
             buy now
           </Button>

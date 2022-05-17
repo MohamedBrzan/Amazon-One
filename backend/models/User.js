@@ -5,6 +5,7 @@ const validator = require('validator');
 
 const UserSchema = new mongoose.Schema(
   {
+    avatar: { type: String, required: [true, 'Please Provide A Avatar'] },
     name: {
       type: String,
       minlength: [3, 'Name Must Be At Least 3 Characters'],
@@ -23,36 +24,25 @@ const UserSchema = new mongoose.Schema(
       minlength: [8, 'Password Must Be At Least 8 Characters'],
       required: [true, 'Please Provide A Password'],
     },
-    avatar: { type: String, required: [true, 'Please Provide A Avatar'] },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
       },
     ],
-    blogs: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Blog',
-      },
-    ],
+
     role: {
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
       required: [true, 'Please provide a code'],
     },
+
     cart: [
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-        orderQuantity: {
-          type: Number,
-          default: 0,
-        },
-        totalOrderAmount: {
-          type: Number,
-          default: 0,
-        },
+        quantity: { type: Number, default: 0 },
+        totalAmount: { type: Number, default: 0 },
       },
     ],
   },

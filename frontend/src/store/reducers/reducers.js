@@ -62,6 +62,7 @@ export const cartSlice = createSlice({
       );
       if (findItemIndex !== -1) {
         cartItems[findItemIndex].quantity += 1;
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
         toast.info('Edit Quantity Successful', {
           position: 'top-right',
           autoClose: 1000,

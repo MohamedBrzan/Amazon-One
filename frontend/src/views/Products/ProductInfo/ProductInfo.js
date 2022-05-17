@@ -12,6 +12,7 @@ import { addToCart } from '../../../store/reducers/reducers';
 
 const ProductInfo = () => {
   const { productInfo } = useSelector((state) => state.product);
+  const { cartItems } = useSelector((state) => state.cart);
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -19,6 +20,11 @@ const ProductInfo = () => {
   }).format;
 
   const dispatch = useDispatch();
+
+  const find = cartItems.find((item) => item.product._id === productInfo._id);
+
+  console.log(find.quantity);
+  console.log(productInfo.countInStock);
 
   return (
     <Container className='my-5'>
@@ -54,24 +60,34 @@ const ProductInfo = () => {
                   <ListGroup.Item>
                     {productInfo.countInStock > 0 ? (
                       <>
-                        {' '}
                         Status : <Badge bg='success'>in stock</Badge>
                       </>
                     ) : (
                       <>
-                        {' '}
                         Status : <Badge bg='danger'>out stock</Badge>
                       </>
                     )}
-                  </ListGroup.Item>{' '}
+                  </ListGroup.Item>
                   <ListGroup.Item>
-                    {productInfo.countInStock > 0 ? (
+                    {productInfo.countInStock > 0 &&
+                    !find.quantity >= productInfo.countInStock ? (
                       <Button
                         className='btn-warning'
                         onClick={() => dispatch(addToCart(productInfo))}
                       >
                         add to cart
                       </Button>
+                    ) : find.quantity < productInfo.countInStock ? (
+                      <Button
+                        className='btn-warning'
+                        onClick={() => dispatch(addToCart(productInfo))}
+                      >
+                        add to cart
+                      </Button>
+                    ) : find.quantity >= productInfo.countInStock ? (
+                      <ListGroup.Item className='text-danger'>
+                        <small>will be available soon!</small>
+                      </ListGroup.Item>
                     ) : (
                       <ListGroup.Item className='text-danger'>
                         <small>will be available soon!</small>

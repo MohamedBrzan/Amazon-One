@@ -38,6 +38,15 @@ exports.logout = Asynchronous(async (req, res, next) => {
   res.json({ message: 'Successfully logged out' });
 });
 
+// Check If User Is Logged In
+exports.IsLoggedIn = Asynchronous(async (req, res, next) => {
+  const { token } = req.cookies;
+
+  if (!token) return next(new ErrorHandler('Unauthorized', 401));
+
+  res.status(200).json({ message: 'User is logged in' });
+});
+
 // Get All Users
 exports.getAllUsers = Asynchronous(async (req, res, next) => {
   const users = await User.find();
@@ -45,13 +54,11 @@ exports.getAllUsers = Asynchronous(async (req, res, next) => {
   res.json(users);
 });
 
-// Check If User Is Logged In
-exports.IsLoggedIn = Asynchronous(async (req, res, next) => {
-  const { token } = req.cookies;
+// User Cart
+exports.userCart = Asynchronous(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
 
-  if (token) return next(new ErrorHandler('You are already logged in', 200));
+  if (!user) return next(new ErrorHandler('Please Login First', 500));
 
-  if (!token) return next(new ErrorHandler('Unauthorized', 401));
-
-  next();
+  res.json(user.cart);
 });

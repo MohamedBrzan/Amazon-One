@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-app.use('/api/v1/products', ProductRoutes);
-app.use('/api/v1/users', UserRoutes);
+app.use('/api/v1/product', ProductRoutes);
+app.use('/api/v1/user', UserRoutes);
 
 module.exports = app;

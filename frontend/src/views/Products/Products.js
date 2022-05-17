@@ -39,7 +39,7 @@ const ProductsPage = () => {
       try {
         await axios({
           method: 'GET',
-          url: '/api/v1/products',
+          url: '/api/v1/product/all',
         }).then((results) =>
           dispatch({ type: 'FETCH_SUCCESS', payload: results.data.products })
         );
