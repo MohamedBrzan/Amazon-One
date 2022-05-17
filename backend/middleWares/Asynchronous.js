@@ -1,13 +1,4 @@
-const Asynchronous = (controller) => {
-  return (req, res, next) => {
-    controller(req, res, next)
-      .then(() => {
-        next();
-      })
-      .catch((err) => {
-        next(err);
-      });
-  };
-};
+const Asynchronous = (controller) => (req, res, next) =>
+  Promise.resolve(controller(req, res, next)).catch(next);
 
 module.exports = Asynchronous;

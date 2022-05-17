@@ -7,11 +7,11 @@ import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import PageTitle from '../../../utils/PageTitle';
 import ErrorMessage from '../../../utils/ErrorMessage';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../../store/reducers/reducers';
 
 const ProductInfo = () => {
-  const product = JSON.parse(localStorage.getItem('product'));
+  const { productInfo } = useSelector((state) => state.product);
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -21,34 +21,38 @@ const ProductInfo = () => {
   const dispatch = useDispatch();
 
   return (
-    <Container className='mt-5'>
-      {product ? (
-        <PageTitle title={product.name} />
+    <Container className='my-5'>
+      {productInfo ? (
+        <PageTitle title={productInfo.name} />
       ) : (
         <PageTitle title='product not found' />
       )}
-      {product ? (
+      {productInfo ? (
         <Row>
-          <Col md={6}>
-            <img src={product.images[0]} alt='product' />
+          <Col md={6} className='mb-3'>
+            <img
+              src={productInfo.images[0]}
+              alt='product'
+              className='img-thumbnail'
+            />
           </Col>
-          <Col md={3}>
+          <Col md={6} lg={3}>
             <ListGroup variant='flush'>
-              <ListGroup.Item>Name : {product.name}</ListGroup.Item>
-              <ListGroup.Item>Brand : {product.brand}</ListGroup.Item>
-              <ListGroup.Item>Code : {product.code}</ListGroup.Item>
-              <ListGroup.Item>Desc : {product.description}</ListGroup.Item>
+              <ListGroup.Item>Name : {productInfo.name}</ListGroup.Item>
+              <ListGroup.Item>Brand : {productInfo.brand}</ListGroup.Item>
+              <ListGroup.Item>Code : {productInfo.code}</ListGroup.Item>
+              <ListGroup.Item>Desc : {productInfo.description}</ListGroup.Item>
             </ListGroup>
           </Col>
-          <Col md={3}>
+          <Col md={6} lg={3}>
             <Card>
               <Card.Body>
                 <ListGroup variant='flush'>
                   <ListGroup.Item>
-                    Price : {formatter(product.price)}
+                    Price : {formatter(productInfo.price)}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    {product.countInStock > 0 ? (
+                    {productInfo.countInStock > 0 ? (
                       <>
                         {' '}
                         Status : <Badge bg='success'>in stock</Badge>
@@ -61,10 +65,10 @@ const ProductInfo = () => {
                     )}
                   </ListGroup.Item>{' '}
                   <ListGroup.Item>
-                    {product.countInStock > 0 ? (
+                    {productInfo.countInStock > 0 ? (
                       <Button
                         className='btn-warning'
-                        onClick={() => dispatch(addToCart(product))}
+                        onClick={() => dispatch(addToCart(productInfo))}
                       >
                         add to cart
                       </Button>

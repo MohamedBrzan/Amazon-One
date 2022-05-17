@@ -1,45 +1,64 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const validator = require('validator');
 
 const UserSchema = new mongoose.Schema(
   {
-    name: { type: String, required: [true, 'please add a name'] },
-
+    name: {
+      type: String,
+      minlength: [3, 'Name Must Be At Least 3 Characters'],
+      required: [true, 'Please provide a name'],
+      trim: true,
+      lowercase: true,
+    },
     email: {
       type: String,
-      required: [true, 'please add an email'],
+      required: [true, 'Please provide An Email'],
+      validate: [validator.isEmail, 'Please Enter A Valid Email '],
       unique: true,
     },
-
     password: {
       type: String,
-      required: [true, 'please add a password'],
-      minlength: [6, 'Password must be at least 6 characters'],
-      select: false,
+      minlength: [8, 'Password Must Be At Least 8 Characters'],
+      required: [true, 'Please Provide A Password'],
     },
-
+    avatar: { type: String, required: [true, 'Please Provide A Avatar'] },
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+      },
+    ],
+    blogs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Blog',
+      },
+    ],
     role: {
       type: String,
-      enum: ['user', 'publisher', 'admin'],
+      enum: ['user', 'admin'],
       default: 'user',
+      required: [true, 'Please provide a code'],
     },
-
     cart: [
       {
-        productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product',
+        product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+        orderQuantity: {
+          type: Number,
+          default: 0,
         },
-        quantity: { type: Number, required: [true, 'please add a quantity'] },
+        totalOrderAmount: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
   },
-
   { timestamps: true }
 );
 
-// Hash password before saving
 UserSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
@@ -47,16 +66,15 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-// Sign JWT and return token before removing sensitive data
-UserSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
+UserSchema.methods.matchPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
 };
 
-// Match user entered password to hashed password in database
-UserSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+UserSchema.methods.generateToken = function () {
+  const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.EXPIRES_IN,
+  });
+  return token;
 };
 
 module.exports = mongoose.model('User', UserSchema);

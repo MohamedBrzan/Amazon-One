@@ -2,7 +2,8 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { addToCart } from '../../../store/reducers/reducers';
+import { addToCart, getProduct } from '../../../store/reducers/reducers';
+import Card from 'react-bootstrap/Card';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -17,27 +18,26 @@ const ProductCard = ({ product }) => {
   const find = cartItems.find((item) => item.product._id === product._id);
 
   return (
-    <div className='product'>
+    <Card>
       <Link
         to={`/products/${product.slug}`}
-        onClick={() => localStorage.setItem('product', JSON.stringify(product))}
+        onClick={() => dispatch(getProduct(product))}
       >
-        {' '}
-        <img src={product.images[0]} alt={product.name} />
+        <Card.Img variant='top' src={product.images[0]} />
       </Link>
-      <div className='product-info'>
+      <Card.Body className='product-info'>
         <Link
           to={`/products/${product.slug}`}
-          onClick={() => localStorage.setItem(JSON.stringify('product'))}
+          onClick={() => dispatch(getProduct(product))}
         >
-          <h3>{product.name}</h3>
+          <h6 className='product-text product-name'>{product.name}</h6>
         </Link>
-        <p>{product.description}</p>
+        <p className='product-text product-desc'>{product.description}</p>
         <p>{formatter(product.price)}</p>
         {product.countInStock < 1 ? (
           <ListGroup variant='flush'>
             {' '}
-            <ListGroup.Item className='text-danger'>
+            <ListGroup.Item className='text-danger product-text'>
               <small>will be available soon!</small>
             </ListGroup.Item>
           </ListGroup>
@@ -50,8 +50,8 @@ const ProductCard = ({ product }) => {
             buy now
           </Button>
         )}
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
   );
 };
 

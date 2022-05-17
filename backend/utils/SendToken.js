@@ -1,14 +1,10 @@
 const SendToken = (res, statusCode, user) => {
-  const token = user.getSignedJwtToken();
+  const token = user.generateToken();
+
   const options = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-    ),
+    expires: new Date(Date.now() + 5 * 60 * 60 * 24 * 30),
+
     httpOnly: true,
-    // secure: process.env.NODE_ENV === 'production',
-    // sameSite: true,
-    // path: '/',
-    // domain: process.env.NODE_ENV === 'production' ? '.shop.com' : 'localhost',
   };
 
   res

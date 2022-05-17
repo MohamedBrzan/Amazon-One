@@ -1,17 +1,9 @@
-.products {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.products .product {
-  border: 1px solid #000;
-  margin: 5px;
-}
-.products .product img {
-  width: 100%;
-  max-width: 400px;
+.product-container img {
+  min-height: 300px;
   max-height: 300px;
 }
-.products .product .product-info {
-  padding: 1rem;
+.product-container .product-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }/*# sourceMappingURL=Products.css.map */

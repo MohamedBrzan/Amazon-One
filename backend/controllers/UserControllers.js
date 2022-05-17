@@ -1,16 +1,17 @@
 const Asynchronous = require('../middleWares/Asynchronous');
+const ErrorHandler = require('../middleWares/ErrorHandler');
 const User = require('../models/User');
 const SendToken = require('../utils/SendToken');
 
 // Register
 exports.register = Asynchronous(async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { avatar, name, email, password } = req.body;
 
   let user = await User.findOne({ email }).select('+password');
 
-  if (user) return res.status(400).json({ message: 'User already exists' });
+  if (user) return next(new ErrorHandler('User Already Registered', 401));
 
-  user = await User.create({ name, email, password });
+  user = await User.create({ avatar, name, email, password });
 
   SendToken(res, 201, user);
 });
@@ -21,11 +22,11 @@ exports.login = Asynchronous(async (req, res, next) => {
 
   let user = await User.findOne({ email }).select('+password');
 
-  if (!user) return res.status(400).json({ message: 'User does not exist' });
+  if (!user) return next(new ErrorHandler('User Does Not Exist', 401));
 
   const isMatch = await user.matchPassword(password);
 
-  if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+  if (!isMatch) return next(new ErrorHandler('Invalid Email or Password', 401));
 
   SendToken(res, 200, user);
 });
@@ -42,4 +43,15 @@ exports.getAllUsers = Asynchronous(async (req, res, next) => {
   const users = await User.find();
 
   res.json(users);
+});
+
+// Check If User Is Logged In
+exports.IsLoggedIn = Asynchronous(async (req, res, next) => {
+  const { token } = req.cookies;
+
+  if (token) return next(new ErrorHandler('You are already logged in', 200));
+
+  if (!token) return next(new ErrorHandler('Unauthorized', 401));
+
+  next();
 });

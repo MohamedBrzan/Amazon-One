@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "PORT=5000 nodemon server"
+    "server": "nodemon server.js"
   },
   "keywords": [],
   "author": "",

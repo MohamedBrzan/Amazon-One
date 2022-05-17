@@ -1,35 +1,39 @@
 const Asynchronous = require('../middleWares/Asynchronous');
 const Product = require('../models/Product');
+const User = require('../models/User');
 
 // Get All Products
 exports.getAllProducts = Asynchronous(async (req, res, next) => {
   const products = await Product.find();
-  res.json(products);
+  res.json({ success: 'true', products });
 });
 
 // Create a new Product
 exports.createProduct = Asynchronous(async (req, res, next) => {
   const {
     name,
-    code,
-    description,
-    price,
-    slug,
     brand,
+    code,
+    slug,
+    category,
+    description,
     countInStock,
-    rating,
+    price,
     images,
   } = req.body;
+
   const product = await Product.create({
+    owner: req.user._id,
     name,
-    code,
-    description,
-    price,
-    slug,
     brand,
+    code,
+    slug,
+    category,
+    description,
     countInStock,
-    rating,
+    price,
     images,
   });
-  res.json(product);
+
+  res.status(200).json({ success: true, product });
 });

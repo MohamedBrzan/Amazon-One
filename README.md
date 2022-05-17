@@ -13,3 +13,4 @@
 7. handled actions (increase and decrease)
 8. handle login page
 9. create user schema
+10. handle authentication

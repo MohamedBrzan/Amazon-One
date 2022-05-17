@@ -1,5 +1,5 @@
 const express = require('express');
-const path = require('path');
+const app = express();
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
@@ -10,15 +10,13 @@ const UserRoutes = require('./routes/UserRoutes');
 
 dotenv.config({ path: 'config/.env' });
 
-const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 app.use(cors());
-app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.json());
+app.use(morgan('dev'));
 
-app.use('/api/v1', ProductRoutes);
-app.use('/api/v1', UserRoutes);
+app.use('/api/v1/products', ProductRoutes);
+app.use('/api/v1/users', UserRoutes);
 
 module.exports = app;

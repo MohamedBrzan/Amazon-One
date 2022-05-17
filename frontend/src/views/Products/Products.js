@@ -1,11 +1,13 @@
 import { useEffect, useReducer } from 'react';
 import axios from 'axios';
-import './Products.css';
 import ProductCard from './ProductCard/ProductCard';
 import ErrorMessage from '../../utils/ErrorMessage';
 import Container from 'react-bootstrap/Container';
 import LoadingSvg from '../../utils/LoadingSvg';
 import ServerErrorMessage from '../../utils/ServerErrorMessage';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import './Products.css';
 
 const ProductsPage = () => {
   const reducer = (state, actions) => {
@@ -39,7 +41,7 @@ const ProductsPage = () => {
           method: 'GET',
           url: '/api/v1/products',
         }).then((results) =>
-          dispatch({ type: 'FETCH_SUCCESS', payload: results.data })
+          dispatch({ type: 'FETCH_SUCCESS', payload: results.data.products })
         );
       } catch (error) {
         dispatch({ type: 'FETCH_ERROR', payload: ServerErrorMessage(error) });
@@ -49,24 +51,26 @@ const ProductsPage = () => {
   }, []);
 
   return (
-    <Container>
+    <Container className='product-container'>
       <h1 className='title'>features list</h1>
       {loading ? (
         <div className='products'>
           <LoadingSvg />
         </div>
       ) : error ? (
-        <ErrorMessage variant='danger'>{error} </ErrorMessage>
+        <ErrorMessage variant='danger'>{error}</ErrorMessage>
       ) : (
-        <div className='products'>
-          {products ? (
+        <Row>
+          {products.length ? (
             products.map((product, index) => (
-              <ProductCard product={product} key={index} />
+              <Col sm={6} md={4} lg={3} className='mb-3' key={index}>
+                <ProductCard product={product} />
+              </Col>
             ))
           ) : (
             <ErrorMessage variant='warning'>no data available</ErrorMessage>
           )}
-        </div>
+        </Row>
       )}
     </Container>
   );
