@@ -24,6 +24,50 @@ const UserSchema = new mongoose.Schema(
       minlength: [8, 'Password Must Be At Least 8 Characters'],
       required: [true, 'Please Provide A Password'],
     },
+
+    shipping: [
+      {
+        address: {
+          type: String,
+          required: [true, 'Please Provide An Address'],
+          trim: true,
+          lowercase: true,
+        },
+        city: {
+          type: String,
+          required: [true, 'Please Provide A City'],
+          trim: true,
+          lowercase: true,
+        },
+        state: {
+          type: String,
+          required: [true, 'Please Provide A State'],
+          trim: true,
+          lowercase: true,
+        },
+        zip: {
+          type: String,
+          required: [true, 'Please Provide A Zip'],
+          trim: true,
+          lowercase: true,
+        },
+        country: {
+          type: String,
+          required: [true, 'Please Provide A Country'],
+          trim: true,
+          lowercase: true,
+        },
+
+        phone: {
+          type: String,
+          required: [true, 'Please Provide A Phone'],
+          trim: true,
+          lowercase: true,
+        },
+        shippingItems: [],
+      },
+    ],
+
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,

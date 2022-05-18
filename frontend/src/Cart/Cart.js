@@ -17,6 +17,7 @@ import {
 import './Cart.css';
 import { Link } from 'react-router-dom';
 import PageTitle from '../utils/PageTitle';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const Cart = () => {
   const { cartItems } = useSelector((state) => state.cart);
@@ -136,12 +137,11 @@ const Cart = () => {
                       <strong>{formatter(Total)}</strong>
                     </Card.Text>
                   </ListGroup.Item>
-                  <Button
-                    className='btn-warning mt-5 m-auto d-block'
-                    href='/login'
-                  >
-                    proceed to checkout
-                  </Button>
+                  <LinkContainer to='/shipping'>
+                    <Button className='btn-warning mt-5 m-auto d-block'>
+                      proceed to checkout
+                    </Button>
+                  </LinkContainer>
                 </Card.Body>
               </ListGroup>
             </Card>

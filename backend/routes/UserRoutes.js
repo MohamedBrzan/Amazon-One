@@ -12,8 +12,8 @@ const { isAuthenticated } = require('../middleWares/Authentication');
 
 router.route('/register').post(register);
 router.route('/login').post(login);
-router.route('/logout').get(logout);
 router.route('/logged').get(IsLoggedIn);
+router.route('/logout').get(logout);
 router.route('/users').get(getAllUsers);
 router.route('/cart').get(isAuthenticated, userCart);
 

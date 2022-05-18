@@ -1,11 +1,34 @@
-import { createContext, useEffect } from 'react';
+import axios from 'axios';
+import { createContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
 
-const IsLogged = () => {
-  useEffect(() => {}, []);
+export const IsLogged = ({ children }) => {
+  const [loggedIn, setLoggedIn] = useState({ success: false, user: {} });
 
-  return <div>IsLogged</div>;
+  const checkUserLoggedIn = async () => {
+    try {
+      await axios({
+        method: 'get',
+        url: '/api/v1/user/logged',
+      }).then((res) =>
+        setLoggedIn({
+          success: res.data.success,
+          user: res.data.user,
+        })
+      );
+    } catch (error) {
+      setLoggedIn({ success: false, user: {} });
+    }
+  };
+
+  useEffect(() => {
+    checkUserLoggedIn();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ loggedIn }}>{children}</AuthContext.Provider>
+  );
 };
 
-export default IsLogged;
+export default AuthContext;

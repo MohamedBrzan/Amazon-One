@@ -1,5 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 import { toast } from 'react-toastify';
+import ErrorMessage from '../../utils/ErrorMessage';
+import ServerErrorMessage from '../../utils/ServerErrorMessage';
 
 // @desc create userSlice
 export const userSlice = createSlice({
@@ -10,8 +13,12 @@ export const userSlice = createSlice({
       : {},
   },
   reducers: {
+    userInfo: (state, action) => {
+      state.user = action.payload;
+      localStorage.setItem('user', JSON.stringify(state.user));
+    },
     login: (state, action) => {
-      state.user = { ...action.payload };
+      state.user = action.payload;
       localStorage.setItem('user', JSON.stringify(state.user));
       toast.success('Login Successful', {
         position: 'top-right',
@@ -20,7 +27,6 @@ export const userSlice = createSlice({
     },
     logout: (state, action) => {
       state.user = {};
-      localStorage.removeItem('user');
       toast.error('Logout Successful', {
         position: 'top-right',
         autoClose: 1000,
@@ -132,7 +138,7 @@ export const cartSlice = createSlice({
     },
   },
 });
-export const { login, logout } = userSlice.actions;
+export const { userInfo, login, logout } = userSlice.actions;
 
 export const { getProduct } = productSlice.actions;
 

@@ -15,3 +15,4 @@
 9. create user schema
 10. handle authentication
 11. create user cart
+12. create user order shipping information && data shipping information

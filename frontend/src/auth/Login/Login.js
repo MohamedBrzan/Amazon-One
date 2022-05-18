@@ -22,9 +22,9 @@ const Login = () => {
       e.preventDefault();
       await axios({
         method: 'post',
-        url: '/api/v1/login',
+        url: '/api/v1/user/login',
         data: { email, password },
-      }).then((response) => dispatch(login(response.data.user)));
+      }).then((res) => dispatch(login(res.data.user)));
     } catch (error) {
       <ErrorMessage variant='danger'>{error.message}</ErrorMessage>;
       toast.error(ServerErrorMessage(error), {

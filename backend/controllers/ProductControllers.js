@@ -182,3 +182,39 @@ exports.removeFromCart = Asynchronous(async (req, res, next) => {
 
   res.json({ success: true, message: 'Product removed from cart' });
 });
+
+// Get Shipping Products
+exports.shippingProducts = Asynchronous(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) return next(new ErrorHandler('Please Login First', 500));
+
+  const cartProducts = user.cart.map((item) => item.product);
+
+  if (!cartProducts.length)
+    return next(new ErrorHandler('No products in cart', 404));
+
+  const { address, city, state, zip, country, phone } = req.body;
+
+  const products = user.cart;
+
+  user.shipping.push({
+    address,
+    city,
+    state,
+    zip,
+    country,
+    phone,
+    shippingItems: products,
+  });
+
+  user.cart = [];
+
+  await user.save();
+
+  res.json({
+    success: true,
+    message: 'Shipping data added',
+    shipping: user.shipping,
+  });
+});

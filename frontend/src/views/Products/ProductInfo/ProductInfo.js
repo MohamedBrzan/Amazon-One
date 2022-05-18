@@ -21,10 +21,7 @@ const ProductInfo = () => {
 
   const dispatch = useDispatch();
 
-  const find = cartItems.find((item) => item.product._id === productInfo._id);
-
-  console.log(find.quantity);
-  console.log(productInfo.countInStock);
+  let find = cartItems.find((item) => item.product._id === productInfo._id);
 
   return (
     <Container className='my-5'>
@@ -58,7 +55,12 @@ const ProductInfo = () => {
                     Price : {formatter(productInfo.price)}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    {productInfo.countInStock > 0 ? (
+                    {productInfo.countInStock > 0 && !find?.quantity ? (
+                      <>
+                        Status : <Badge bg='success'>in stock</Badge>
+                      </>
+                    ) : productInfo.countInStock > 0 &&
+                      find?.quantity < productInfo.countInStock ? (
                       <>
                         Status : <Badge bg='success'>in stock</Badge>
                       </>
@@ -69,25 +71,21 @@ const ProductInfo = () => {
                     )}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    {productInfo.countInStock > 0 &&
-                    !find.quantity >= productInfo.countInStock ? (
+                    {productInfo.countInStock > 0 && !find?.quantity ? (
                       <Button
                         className='btn-warning'
                         onClick={() => dispatch(addToCart(productInfo))}
                       >
                         add to cart
                       </Button>
-                    ) : find.quantity < productInfo.countInStock ? (
+                    ) : productInfo.countInStock > 0 &&
+                      find?.quantity < productInfo.countInStock ? (
                       <Button
                         className='btn-warning'
                         onClick={() => dispatch(addToCart(productInfo))}
                       >
                         add to cart
                       </Button>
-                    ) : find.quantity >= productInfo.countInStock ? (
-                      <ListGroup.Item className='text-danger'>
-                        <small>will be available soon!</small>
-                      </ListGroup.Item>
                     ) : (
                       <ListGroup.Item className='text-danger'>
                         <small>will be available soon!</small>

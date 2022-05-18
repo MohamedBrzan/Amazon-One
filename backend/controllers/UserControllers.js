@@ -44,7 +44,11 @@ exports.IsLoggedIn = Asynchronous(async (req, res, next) => {
 
   if (!token) return next(new ErrorHandler('Unauthorized', 401));
 
-  res.status(200).json({ message: 'User is logged in' });
+  const user = await User.findOne({ token });
+
+  if (!user) return next(new ErrorHandler('Unauthorized', 401));
+
+  res.json({ success: true, message: 'Successfully Logged In', user });
 });
 
 // Get All Users

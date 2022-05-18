@@ -7,16 +7,20 @@ import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import store from './store/store';
+import { IsLogged } from './auth/IsLogged/IsLogged';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <HelmetProvider>
-        <App />
-      </HelmetProvider>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <HelmetProvider>
+      <IsLogged>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </IsLogged>
+    </HelmetProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
