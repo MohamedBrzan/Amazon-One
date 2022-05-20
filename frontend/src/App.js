@@ -13,6 +13,7 @@ import Profile from './views/Me/Profile/Profile';
 import MyProducts from './views/Me/MyProducts/MyProducts';
 import MyOrders from './views/Me/MyOrders/MyOrders';
 import CreateProduct from './views/Me/Create/CreateProduct';
+import EditProduct from './views/Me/MyProducts/EditProduct';
 
 function App() {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -43,6 +44,7 @@ function App() {
 
           <Route path='/products' element={<ProductsPage />} />
           <Route path='/products/:slug' element={<ProductInfo />} />
+          <Route path='/product/:slug/edit' element={<EditProduct />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/' element={<Home />} />
         </Routes>

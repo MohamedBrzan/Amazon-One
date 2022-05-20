@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"MyProducts.css"}
+{"version":3,"sources":["MyProducts.scss","MyProducts.css"],"names":[],"mappings":"AAAA;;EAEE,kBAAA;EAEA,eAAA;EAEA,aAAA;EACA,eAAA;ACDF;;ADIA;EACE,QAAA;EACA,WAAA;EACA,aAAA;EACA,sBAAA;ACDF;;ADIA;EACE,SAAA;EACA,WAAA;EACA,sBAAA;EACA,sBAAA;ACDF;ADEE;EACE,cAAA;ACAJ","file":"MyProducts.css"}

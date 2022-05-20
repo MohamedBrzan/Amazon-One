@@ -9,10 +9,15 @@ import PageTitle from '../../../utils/PageTitle';
 import ErrorMessage from '../../../utils/ErrorMessage';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../../store/reducers/reducers';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const ProductInfo = () => {
   const { productInfo } = useSelector((state) => state.product);
+
   const { cartItems } = useSelector((state) => state.cart);
+
+  const user = JSON.parse(localStorage.getItem('user'));
+
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -22,6 +27,8 @@ const ProductInfo = () => {
   const dispatch = useDispatch();
 
   let find = cartItems.find((item) => item.product._id === productInfo._id);
+
+  const navigate = useNavigate();
 
   return (
     <Container className='my-5'>
@@ -74,7 +81,13 @@ const ProductInfo = () => {
                     {productInfo.countInStock > 0 && !find?.quantity ? (
                       <Button
                         className='btn-warning'
-                        onClick={() => dispatch(addToCart(productInfo))}
+                        onClick={() => {
+                          if (user.name) {
+                            dispatch(addToCart(productInfo));
+                          } else {
+                            navigate('/login');
+                          }
+                        }}
                       >
                         add to cart
                       </Button>
@@ -82,7 +95,13 @@ const ProductInfo = () => {
                       find?.quantity < productInfo.countInStock ? (
                       <Button
                         className='btn-warning'
-                        onClick={() => dispatch(addToCart(productInfo))}
+                        onClick={() => {
+                          if (user.name) {
+                            dispatch(addToCart(productInfo));
+                          } else {
+                            navigate('/login');
+                          }
+                        }}
                       >
                         add to cart
                       </Button>

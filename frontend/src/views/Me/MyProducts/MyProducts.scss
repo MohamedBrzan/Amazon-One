@@ -1,7 +1,9 @@
 .edit-btn,
 .delete-btn {
   position: absolute;
+
   font-size: 20px;
+
   padding: 10px;
   cursor: pointer;
 }
@@ -18,7 +20,7 @@
   right: 13px;
   color: rgb(99, 34, 34);
   background-color: #000;
+  &:hover {
+    color: #ff0000;
+  }
 }
-.delete-btn:hover {
-  color: #ff0000;
-}/*# sourceMappingURL=MyProducts.css.map */

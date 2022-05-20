@@ -59,7 +59,7 @@ exports.findProduct = Asynchronous(async (req, res, next) => {
 
 // Update a Product
 exports.updateProduct = Asynchronous(async (req, res, next) => {
-  const {
+  let {
     name,
     brand,
     code,
@@ -71,9 +71,39 @@ exports.updateProduct = Asynchronous(async (req, res, next) => {
     images,
   } = req.body;
 
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+    .populate('products');
+
+  if (!user) return next(new ErrorHandler('Please Login First', 404));
+
   let product = await Product.findOne({ slug: req.params.slug });
 
   if (!product) return next(new ErrorHandler('Product not found', 404));
+
+  if (countInStock <= 0 && price <= 0) {
+    countInStock = product.countInStock;
+    price = product.price;
+  } else if (name === '' || name === undefined) {
+    name = product.name;
+  } else if (brand === '' || brand === undefined) {
+    brand = product.brand;
+  } else if (code === '' || code === undefined) {
+    code = product.code;
+  } else if (category === '' || category === undefined) {
+    category = product.category;
+  } else if (description === '' || description === undefined) {
+    description = product.description;
+  } else if (countInStock <= 0 || countInStock === undefined) {
+    countInStock = product.countInStock;
+  } else if (price <= 0 || price === undefined) {
+    price = product.price;
+  } else if (countInStock <= 0 && price <= 0) {
+    countInStock = product.countInStock;
+    price = product.price;
+  }
 
   product = await Product.findOneAndUpdate(
     { slug: req.params.slug },
@@ -86,32 +116,53 @@ exports.updateProduct = Asynchronous(async (req, res, next) => {
       description,
       countInStock,
       price,
-      images,
     },
     {
       new: true,
       runValidators: true,
     }
-  );
+  ).then(async (product) => {
+    user.products.forEach((item) => {
+      if (item._id.toString() === product._id.toString()) {
+        item.name = product.name;
+        item.brand = product.brand;
+        item.code = product.code;
+        item.slug = product.slug;
+        item.category = product.category;
+        item.description = product.description;
+        item.countInStock = product.countInStock;
+        item.price = product.price;
+        item.images = product.images;
+      }
+    });
 
-  res.json({ success: true, product });
+    await user.save();
+  });
+
+  res.json({ success: true, product, user });
 });
 
 // Delete a Product
 exports.deleteProduct = Asynchronous(async (req, res, next) => {
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+    .populate('products');
+
+  if (!user) return next(new ErrorHandler('Please Login First', 500));
+
   const product = await Product.findOne({ slug: req.params.slug });
 
   if (!product) return next(new ErrorHandler('Product not found', 404));
 
-  const productOwner = await User.findById(product.owner._id.toString());
+  user.products.pull(product._id);
 
-  productOwner.products.pull(product._id);
-
-  await productOwner.save();
+  await user.save();
 
   await Product.findOneAndDelete({ slug: req.params.slug });
 
-  res.json({ success: true, message: 'Product deleted' });
+  res.json({ success: true, message: 'Product deleted', user });
 });
 
 // Add Product to Cart And Increase Quantity
@@ -273,5 +324,6 @@ exports.shippingProducts = Asynchronous(async (req, res, next) => {
     success: true,
     message: 'Shipping data added',
     shipping: user.shipping,
+    user,
   });
 });

@@ -18,3 +18,4 @@
 12. create user order shipping information && data shipping information
 13. create user profile page
 14. create user products page
+15. create shipping page
