@@ -7,18 +7,15 @@ import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import store from './store/store';
-import { IsLogged } from './auth/IsLogged/IsLogged';
 import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <HelmetProvider>
-      <IsLogged>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </IsLogged>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </HelmetProvider>
   </Provider>
 );

@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import ErrorMessage from '../utils/ErrorMessage';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
@@ -14,13 +15,15 @@ import {
   removeAllCart,
   removeItem,
 } from '../store/reducers/reducers';
+import './Cart.css';
 import { Link } from 'react-router-dom';
 import PageTitle from '../utils/PageTitle';
 import { LinkContainer } from 'react-router-bootstrap';
-import './Cart.css';
 
 const Cart = () => {
   const { cartItems } = useSelector((state) => state.cart);
+
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -30,9 +33,13 @@ const Cart = () => {
 
   const dispatch = useDispatch();
 
-  const Total = cartItems.reduce((acc, item) => {
-    return acc + item.product.price * item.quantity;
-  }, 0);
+  let Total;
+
+  if (user.name) {
+    Total = cartItems.reduce((acc, item) => {
+      return acc + item.product.price * item.quantity;
+    }, 0);
+  }
 
   return (
     <Container className='mt-5 cart'>
@@ -40,7 +47,7 @@ const Cart = () => {
       <PageTitle title='Cart' />
       <Row>
         <Col lg={8} className='mb-5'>
-          {cartItems.length > 0 ? (
+          {user.cart.length > 0 ? (
             <>
               <Table striped bordered hover className='text-center'>
                 <thead>
@@ -52,7 +59,7 @@ const Cart = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {cartItems.map((item, index) => (
+                  {user.cart.map((item, index) => (
                     <tr key={index}>
                       <td>
                         <Link
@@ -119,7 +126,7 @@ const Cart = () => {
           )}
         </Col>
         <Col lg={4}>
-          {cartItems.length > 0 && (
+          {user.cart.length > 0 && (
             <Card>
               <ListGroup variant='flush'>
                 <ListGroup.Item>

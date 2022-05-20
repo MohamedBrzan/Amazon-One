@@ -24,7 +24,11 @@ const Login = () => {
         method: 'post',
         url: '/api/v1/user/login',
         data: { email, password },
-      }).then((res) => dispatch(login(res.data.user)));
+      }).then((res) => {
+        dispatch(login(res.data.user));
+        localStorage.setItem('cartItems', JSON.stringify(res.data.user.cart));
+      });
+      window.location.href = '/';
     } catch (error) {
       <ErrorMessage variant='danger'>{error.message}</ErrorMessage>;
       toast.error(ServerErrorMessage(error), {

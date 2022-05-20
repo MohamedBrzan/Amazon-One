@@ -7,6 +7,7 @@ import Card from 'react-bootstrap/Card';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem('user'));
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -45,12 +46,14 @@ const ProductCard = ({ product }) => {
           <small className='text-danger'>will be available soon!</small>
         ) : (
           <Button
-            className={
-              find && find.quantity >= product.countInStock
-                ? 'btn-danger'
-                : 'btn-warning'
-            }
-            onClick={() => dispatch(addToCart(product))}
+            variant='warning'
+            onClick={() => {
+              if (user.name) {
+                return dispatch(addToCart(product));
+              } else {
+                return (window.location.href = '/login');
+              }
+            }}
           >
             buy now
           </Button>

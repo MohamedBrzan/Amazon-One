@@ -1,0 +1,25 @@
+.container-maxwidth {
+  max-width: 600px !important;
+  margin: 0 auto;
+}
+.container-maxwidth input::-webkit-outer-spin-button,
+.container-maxwidth input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+  /* <-- Apparently some margin are still there even though it's hidden */
+}
+.container-maxwidth input[type=number] {
+  -moz-appearance: textfield;
+  /* Firefox */
+}
+.container-maxwidth .images {
+  margin-top: 20px;
+  text-align: center;
+}
+.container-maxwidth .images .handle-image {
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  margin: 5px;
+}/*# sourceMappingURL=CreateProduct.css.map */

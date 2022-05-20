@@ -12,7 +12,9 @@ import { toast } from 'react-toastify';
 
 const NavLinks = () => {
   const { cartItems } = useSelector((state) => state.cart);
-  const { user } = useSelector((state) => state.user);
+
+  const user = JSON.parse(localStorage.getItem('user'));
+
   const dispatch = useDispatch();
 
   const totalLength = cartItems.reduce((curr, item) => curr + item.quantity, 0);
@@ -26,7 +28,6 @@ const NavLinks = () => {
         url: '/api/v1/user/logout',
       });
       dispatch(logout());
-      localStorage.setItem('user', JSON.stringify({}));
     } catch (error) {
       <ErrorMessage variant='danger'>{error.message}</ErrorMessage>;
       toast.error(ServerErrorMessage(error), {
@@ -39,20 +40,19 @@ const NavLinks = () => {
   return (
     <Navbar bg='dark' variant='dark'>
       <Nav>
+        {' '}
         <LinkContainer to='/'>
           <Nav.Link className='navbar-brand'> AMAZON</Nav.Link>
-        </LinkContainer>
-
+        </LinkContainer>{' '}
         <LinkContainer to='/'>
           <Nav.Link className='navbar-brand'>Home</Nav.Link>
-        </LinkContainer>
-
+        </LinkContainer>{' '}
         <LinkContainer to='/products'>
           <Nav.Link className='navbar-brand'> Products</Nav.Link>
         </LinkContainer>
         <LinkContainer to='/cart'>
           <Nav.Link>
-            {cartItems.length > 0 ? (
+            {totalLength > 0 ? (
               <>
                 Cart <Badge pill>{totalLength}</Badge>
               </>
@@ -63,14 +63,28 @@ const NavLinks = () => {
         </LinkContainer>
         <Navbar.Collapse>
           <Nav>
-            <NavDropdown title={user ? user.name : 'user'} menuVariant='dark'>
-              <NavDropdown.Item href='#action/3.1'>Action</NavDropdown.Item>
-              <NavDropdown.Item href='#action/3.2'>
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href='#action/3.3'>Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              {user ? (
+            <NavDropdown
+              title={user.name ? user.name : 'user'}
+              menuVariant='dark'
+            >
+              {user.name && (
+                <>
+                  <LinkContainer to='/me'>
+                    <NavDropdown.Item>profile</NavDropdown.Item>
+                  </LinkContainer>{' '}
+                  <LinkContainer to='/create'>
+                    <NavDropdown.Item>create</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/my-products'>
+                    <NavDropdown.Item>products</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/my-orders'>
+                    <NavDropdown.Item>orders</NavDropdown.Item>
+                  </LinkContainer>
+                  <NavDropdown.Divider />
+                </>
+              )}
+              {user.name ? (
                 <NavDropdown.Item onClick={loggingOut}>logout</NavDropdown.Item>
               ) : (
                 <LinkContainer to='/login'>

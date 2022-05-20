@@ -1,0 +1,24 @@
+.container-maxwidth {
+  max-width: 600px !important;
+  margin: 0 auto;
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield; /* Firefox */
+  }
+  .images {
+    margin-top: 20px;
+    text-align: center;
+    .handle-image {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      margin: 5px;
+    }
+  }
+}

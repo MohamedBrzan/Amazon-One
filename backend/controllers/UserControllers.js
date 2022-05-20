@@ -5,11 +5,14 @@ const SendToken = require('../utils/SendToken');
 
 // Register
 exports.register = Asynchronous(async (req, res, next) => {
-  const { avatar, name, email, password } = req.body;
+  const { avatar, name, email, password, reenterPassword } = req.body;
 
   let user = await User.findOne({ email }).select('+password');
 
   if (user) return next(new ErrorHandler('User Already Registered', 401));
+
+  if (password !== reenterPassword)
+    return next(new ErrorHandler('Password Does Not Match', 401));
 
   user = await User.create({ avatar, name, email, password });
 
@@ -20,7 +23,12 @@ exports.register = Asynchronous(async (req, res, next) => {
 exports.login = Asynchronous(async (req, res, next) => {
   const { email, password } = req.body;
 
-  let user = await User.findOne({ email }).select('+password');
+  let user = await User.findOne({ email })
+    .select('+password')
+    .populate({
+      path: 'cart.product',
+    })
+    .populate('products');
 
   if (!user) return next(new ErrorHandler('User Does Not Exist', 401));
 
@@ -44,7 +52,9 @@ exports.IsLoggedIn = Asynchronous(async (req, res, next) => {
 
   if (!token) return next(new ErrorHandler('Unauthorized', 401));
 
-  const user = await User.findOne({ token });
+  const user = await User.findOne({ token }).populate({
+    path: 'cart.product',
+  });
 
   if (!user) return next(new ErrorHandler('Unauthorized', 401));
 
@@ -58,11 +68,39 @@ exports.getAllUsers = Asynchronous(async (req, res, next) => {
   res.json(users);
 });
 
+// Get User
+exports.getUser = Asynchronous(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) return next(new ErrorHandler('Please Login First', 404));
+
+  res.json(user);
+});
+
 // User Cart
 exports.userCart = Asynchronous(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).populate({
+    path: 'cart.product',
+  });
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));
 
   res.json(user.cart);
+});
+
+// Delete User Cart
+exports.deleteUserCart = Asynchronous(async (req, res, next) => {
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+    .populate('products');
+
+  if (!user) return next(new ErrorHandler('Please Login First', 500));
+
+  user.cart = [];
+
+  await user.save();
+
+  res.json({ cart: user.cart, user });
 });

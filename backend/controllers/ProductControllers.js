@@ -114,11 +114,15 @@ exports.deleteProduct = Asynchronous(async (req, res, next) => {
   res.json({ success: true, message: 'Product deleted' });
 });
 
-// Add Product to Cart
-exports.addToCart = Asynchronous(async (req, res, next) => {
+// Add Product to Cart And Increase Quantity
+exports.addToCartAndIncreaseQuantity = Asynchronous(async (req, res, next) => {
   const { quantity, slug } = req.body;
 
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+    .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));
 
@@ -144,6 +148,7 @@ exports.addToCart = Asynchronous(async (req, res, next) => {
     return res.json({
       success: true,
       message: 'Product updated in cart',
+      user,
       found,
     });
   } else {
@@ -155,14 +160,61 @@ exports.addToCart = Asynchronous(async (req, res, next) => {
 
     await user.save();
 
-    return res.json({ success: true, message: 'Product added to cart' });
+    return res.json({
+      success: true,
+      message: 'Product added to cart',
+      cart: user.cart,
+      user,
+    });
   }
+});
+
+// Add Product to Cart And Decrease Quantity
+exports.addToCartAndDecreaseQuantity = Asynchronous(async (req, res, next) => {
+  const { quantity, slug } = req.body;
+
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+    .populate('products');
+  if (!user) return next(new ErrorHandler('Please Login First', 500));
+
+  const product = await Product.findOne({ slug });
+
+  if (!product) return next(new ErrorHandler('Product not found', 404));
+
+  const found = user.cart.find(
+    (item) => item.product._id.toString() === product._id.toString()
+  );
+
+  found.quantity -= 1;
+
+  found.totalAmount = found.quantity * product.price;
+
+  if (found.quantity < quantity) {
+    return next(
+      new ErrorHandler('Cannot Decrease This Number From Product Quantity', 404)
+    );
+  }
+  await user.save();
+  return res.json({
+    success: true,
+    message: 'Product updated in cart',
+    cart: user.cart,
+    user,
+    found,
+  });
 });
 
 // Remove Product from Cart
 exports.removeFromCart = Asynchronous(async (req, res, next) => {
   const { slug } = req.body;
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+    .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));
 
@@ -180,12 +232,16 @@ exports.removeFromCart = Asynchronous(async (req, res, next) => {
 
   await user.save();
 
-  res.json({ success: true, message: 'Product removed from cart' });
+  res.json({ success: true, message: 'Product removed from cart', user });
 });
 
 // Get Shipping Products
 exports.shippingProducts = Asynchronous(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+    .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));
 
@@ -194,11 +250,12 @@ exports.shippingProducts = Asynchronous(async (req, res, next) => {
   if (!cartProducts.length)
     return next(new ErrorHandler('No products in cart', 404));
 
-  const { address, city, state, zip, country, phone } = req.body;
+  const { fullName, address, city, state, zip, country, phone } = req.body;
 
   const products = user.cart;
 
   user.shipping.push({
+    fullName,
     address,
     city,
     state,

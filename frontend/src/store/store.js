@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/dist/query';
 import { cartSlice, productSlice, userSlice } from './reducers/reducers';
 
 const store = configureStore({
@@ -9,4 +10,5 @@ const store = configureStore({
   },
 });
 
+setupListeners(store.dispatch);
 export default store;

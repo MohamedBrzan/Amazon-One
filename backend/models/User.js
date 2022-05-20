@@ -27,15 +27,15 @@ const UserSchema = new mongoose.Schema(
 
     shipping: [
       {
-        address: {
+        fullName: {
           type: String,
-          required: [true, 'Please Provide An Address'],
+          required: [true, 'Please Provide An fullName'],
           trim: true,
           lowercase: true,
         },
-        city: {
+        address: {
           type: String,
-          required: [true, 'Please Provide A City'],
+          required: [true, 'Please Provide An Address'],
           trim: true,
           lowercase: true,
         },
@@ -45,19 +45,23 @@ const UserSchema = new mongoose.Schema(
           trim: true,
           lowercase: true,
         },
-        zip: {
-          type: String,
-          required: [true, 'Please Provide A Zip'],
-          trim: true,
-          lowercase: true,
-        },
         country: {
           type: String,
           required: [true, 'Please Provide A Country'],
           trim: true,
           lowercase: true,
         },
-
+        city: {
+          type: String,
+          required: [true, 'Please Provide A City'],
+          trim: true,
+          lowercase: true,
+        },
+        zip: {
+          type: Number,
+          required: [true, 'Please Provide A Zip'],
+          trim: true,
+        },
         phone: {
           type: String,
           required: [true, 'Please Provide A Phone'],
