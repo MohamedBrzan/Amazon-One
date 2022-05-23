@@ -7,3 +7,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-transform: capitalize;
 }
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

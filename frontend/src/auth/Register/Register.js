@@ -11,9 +11,17 @@ import PageTitle from '../../utils/PageTitle';
 import './Register.css';
 
 const Register = () => {
-  const [avatar, setAvatar] = useState('');
-  const [name, setName] = useState('');
+  const [avatar, setAvatar] = useState(
+    'https://rcmi.fiu.edu/wp-content/uploads/sites/30/2018/02/no_user.png' || ''
+  );
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [state, setState] = useState('');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
+  const [zip, setZip] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [reenterPassword, setReenterPassword] = useState('');
 
@@ -35,11 +43,17 @@ const Register = () => {
         method: 'post',
         url: '/api/v1/user/register',
         data: {
-          name,
+          avatar,
+          fullName,
           email,
+          address,
+          state,
+          country,
+          city,
+          zip,
+          phone,
           password,
           reenterPassword,
-          avatar,
         },
       }).then((res) => console.log(res.data));
       toast.success('Register success', {
@@ -95,25 +109,24 @@ const Register = () => {
             <input
               type='file'
               name='avatar'
-              required
               onChange={handleUploadAvatar}
               className='file-input'
             />
           </div>
         </div>
-        <Form.Group controlId='name' className='my-3'>
-          <Form.Label>name</Form.Label>
+        <Form.Group controlId='fullName' className='my-3'>
+          <Form.Label>full Name</Form.Label>
           <Form.Control
             type='text'
-            name='name'
-            value={name}
-            placeholder='Enter Your Name'
+            name='fullName'
+            value={fullName}
+            placeholder='Enter Your Full Name'
             required
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setFullName(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId='email' className='my-3'>
-          <Form.Label>Email address</Form.Label>
+          <Form.Label>Email</Form.Label>
           <Form.Control
             type='email'
             name='email'
@@ -125,6 +138,72 @@ const Register = () => {
           <Form.Text className='text-muted'>
             We'll never share your email with anyone else.
           </Form.Text>
+        </Form.Group>{' '}
+        <Form.Group controlId='address' className='my-3'>
+          <Form.Label>address</Form.Label>
+          <Form.Control
+            type='text'
+            name='address'
+            value={address}
+            placeholder='Enter Your Address'
+            required
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </Form.Group>{' '}
+        <Form.Group controlId='state' className='my-3'>
+          <Form.Label>state</Form.Label>
+          <Form.Control
+            type='text'
+            name='state'
+            value={state}
+            placeholder='Enter Your State'
+            required
+            onChange={(e) => setState(e.target.value)}
+          />
+        </Form.Group>{' '}
+        <Form.Group controlId='country' className='my-3'>
+          <Form.Label>country</Form.Label>
+          <Form.Control
+            type='text'
+            name='country'
+            value={country}
+            placeholder='Enter Your Country'
+            required
+            onChange={(e) => setCountry(e.target.value)}
+          />
+        </Form.Group>{' '}
+        <Form.Group controlId='city' className='my-3'>
+          <Form.Label>city</Form.Label>
+          <Form.Control
+            type='text'
+            name='city'
+            value={city}
+            placeholder='Enter Your City'
+            required
+            onChange={(e) => setCity(e.target.value)}
+          />
+        </Form.Group>{' '}
+        <Form.Group controlId='zip' className='my-3'>
+          <Form.Label>zip code</Form.Label>
+          <Form.Control
+            type='number'
+            name='zip'
+            value={zip}
+            placeholder='Enter Your Zip Code Number'
+            required
+            onChange={(e) => setZip(e.target.value)}
+          />
+        </Form.Group>{' '}
+        <Form.Group controlId='phone' className='my-3'>
+          <Form.Label>phone number</Form.Label>
+          <Form.Control
+            type='number'
+            name='phone'
+            value={phone}
+            placeholder='Enter Your Phone Number'
+            required
+            onChange={(e) => setPhone(e.target.value)}
+          />
         </Form.Group>
         <Form.Group controlId='password' className='my-3'>
           <Form.Label>password</Form.Label>
@@ -150,7 +229,7 @@ const Register = () => {
         </Form.Group>
         <Button className='my-3' variant='warning' type='submit'>
           Register
-        </Button>
+        </Button>{' '}
         I'm Consumer ? <Link to='/login'>I'm Already Have An Account</Link>
       </Form>
     </Container>

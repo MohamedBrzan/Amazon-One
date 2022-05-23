@@ -8,8 +8,14 @@ import Col from 'react-bootstrap/Col';
 import { useState } from 'react';
 import ErrorMessage from '../../../utils/ErrorMessage';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { userInfo } from '../../../store/reducers/reducers';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import ServerErrorMessage from '../../../utils/ServerErrorMessage';
 
 const CreateProduct = () => {
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
   const [code, setCode] = useState('');
@@ -21,9 +27,36 @@ const CreateProduct = () => {
   const [images, setImages] = useState([]);
   //   let images = [];
 
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   // Upload Images
   function uploadImages() {
     var files = document.querySelector('input[type=file]').files;
+
+    // check files size
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].size > 200000) {
+        toast.error(
+          'File size is too big, please upload a smaller file less than 200kb',
+          {
+            position: 'top-right',
+            autoClose: 15000,
+          }
+        );
+        return;
+      } else if (files.length > 4) {
+        toast.error(
+          'File length is too long, please upload a smaller file less than or equal 4',
+          {
+            position: 'top-right',
+            autoClose: 15000,
+          }
+        );
+        return;
+      }
+    }
 
     function readAndPreview(file) {
       // Make sure `file.name` matches our extensions criteria
@@ -49,6 +82,7 @@ const CreateProduct = () => {
 
   const uploadProducts = async (e) => {
     try {
+      setLoading(true);
       e.preventDefault();
       const data = {
         name,
@@ -65,9 +99,22 @@ const CreateProduct = () => {
         method: 'POST',
         url: '/api/v1/product/new',
         data: data,
+      }).then(async (response) => {
+        await axios({
+          method: 'GET',
+          url: '/api/v1/user',
+        }).then((result) => {
+          dispatch(userInfo(result.data));
+          setLoading(false);
+          navigate('/my-products');
+        });
       });
     } catch (error) {
-      <ErrorMessage variant='danger'>{error.message}</ErrorMessage>;
+      setLoading(false);
+      toast.error(ServerErrorMessage(error), {
+        position: 'top-right',
+        autoClose: 5000,
+      });
     }
   };
 
@@ -78,6 +125,7 @@ const CreateProduct = () => {
         <Form.Group controlId='name' className='my-3'>
           <Form.Label>name</Form.Label>
           <Form.Control
+            disabled={loading}
             name='name'
             type='text'
             value={name}
@@ -88,6 +136,7 @@ const CreateProduct = () => {
         <Form.Group controlId='brand' className='my-3'>
           <Form.Label>brand name</Form.Label>
           <Form.Control
+            disabled={loading}
             name='brand'
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
@@ -98,6 +147,7 @@ const CreateProduct = () => {
         <Form.Group controlId='code' className='my-3'>
           <Form.Label>code</Form.Label>
           <Form.Control
+            disabled={loading}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             name='code'
@@ -107,6 +157,7 @@ const CreateProduct = () => {
         <Form.Group controlId='slug' className='my-3'>
           <Form.Label>slug</Form.Label>
           <Form.Control
+            disabled={loading}
             name='slug'
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
@@ -120,6 +171,7 @@ const CreateProduct = () => {
         <Form.Group controlId='category'>
           <Form.Label>category</Form.Label>
           <Form.Control
+            disabled={loading}
             name='category'
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -133,6 +185,7 @@ const CreateProduct = () => {
           className='my-3'
         >
           <Form.Control
+            disabled={loading}
             as={'textarea'}
             name='description'
             value={description}
@@ -144,6 +197,7 @@ const CreateProduct = () => {
         <Form.Group controlId='countInStock'>
           <Form.Label>count in stock</Form.Label>
           <Form.Control
+            disabled={loading}
             name='countInStock'
             value={countInStock}
             onChange={(e) => setCountInStocks(e.target.value)}
@@ -154,6 +208,7 @@ const CreateProduct = () => {
         <Form.Group controlId='price' className='my-3'>
           <Form.Label>price</Form.Label>
           <Form.Control
+            disabled={loading}
             name='price'
             value={price}
             onChange={(e) => setPrice(e.target.value)}
@@ -164,13 +219,14 @@ const CreateProduct = () => {
         <Form.Group controlId='images' className='my-3'>
           <Form.Label>images</Form.Label>
           <Form.Control
+            disabled={loading}
             name='images'
             type='file'
             multiple
             onChange={uploadImages}
           />
         </Form.Group>
-        <Button variant='warning' type='submit'>
+        <Button disabled={loading} variant='warning' type='submit'>
           Upload The Product
         </Button>
       </Form>

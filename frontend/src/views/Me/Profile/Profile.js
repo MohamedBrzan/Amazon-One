@@ -3,9 +3,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Profile.css';
+import { useSelector } from 'react-redux';
 
 const Profile = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useSelector((state) => state.user);
 
   return (
     <Container>

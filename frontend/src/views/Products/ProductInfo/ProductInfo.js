@@ -9,14 +9,15 @@ import PageTitle from '../../../utils/PageTitle';
 import ErrorMessage from '../../../utils/ErrorMessage';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../../store/reducers/reducers';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import './ProductInfo.css';
 
 const ProductInfo = () => {
   const { productInfo } = useSelector((state) => state.product);
 
   const { cartItems } = useSelector((state) => state.cart);
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useSelector((state) => state.user);
 
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -39,19 +40,29 @@ const ProductInfo = () => {
       )}
       {productInfo ? (
         <Row>
-          <Col md={6} className='mb-3'>
+          <Col md={6} lg={3} className='mb-3 text-center'>
             <img
               src={productInfo.images[0]}
               alt='product'
               className='img-thumbnail'
             />
           </Col>
-          <Col md={6} lg={3}>
+          <Col md={6}>
             <ListGroup variant='flush'>
-              <ListGroup.Item>Name : {productInfo.name}</ListGroup.Item>
-              <ListGroup.Item>Brand : {productInfo.brand}</ListGroup.Item>
-              <ListGroup.Item>Code : {productInfo.code}</ListGroup.Item>
-              <ListGroup.Item>Desc : {productInfo.description}</ListGroup.Item>
+              <ListGroup.Item className='overflow-text'>
+                <span className='text-primary'>Name : </span> {productInfo.name}
+              </ListGroup.Item>
+              <ListGroup.Item className='overflow-text'>
+                <span className='text-primary'>Brand : </span>
+                {productInfo.brand}
+              </ListGroup.Item>
+              <ListGroup.Item className='overflow-text'>
+                <span className='text-primary'>Code : </span> {productInfo.code}
+              </ListGroup.Item>
+              <ListGroup.Item className='overflow-text'>
+                <span className='text-primary'>Description : </span>
+                {productInfo.description}
+              </ListGroup.Item>
             </ListGroup>
           </Col>
           <Col md={6} lg={3}>
@@ -82,7 +93,7 @@ const ProductInfo = () => {
                       <Button
                         className='btn-warning'
                         onClick={() => {
-                          if (user.name) {
+                          if (user.fullName) {
                             dispatch(addToCart(productInfo));
                           } else {
                             navigate('/login');
@@ -96,7 +107,7 @@ const ProductInfo = () => {
                       <Button
                         className='btn-warning'
                         onClick={() => {
-                          if (user.name) {
+                          if (user.fullName) {
                             dispatch(addToCart(productInfo));
                           } else {
                             navigate('/login');

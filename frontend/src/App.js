@@ -7,16 +7,18 @@ import ProductsPage from './views/Products/Products';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Login from './auth/Login/Login';
-import Shipping from './views/Shipping/Shipping';
+import ShippingDetails from './views/MakeOrder/ShippingDetails';
 import Register from './auth/Register/Register';
 import Profile from './views/Me/Profile/Profile';
 import MyProducts from './views/Me/MyProducts/MyProducts';
 import MyOrders from './views/Me/MyOrders/MyOrders';
 import CreateProduct from './views/Me/Create/CreateProduct';
 import EditProduct from './views/Me/MyProducts/EditProduct';
+import { useSelector } from 'react-redux';
+import PlaceOrder from './views/MakeOrder/PlaceOrder';
 
 function App() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useSelector((state) => state.user);
 
   return (
     <>
@@ -26,19 +28,20 @@ function App() {
       </header>
       <main>
         <Routes>
-          {!user.name && (
+          {!user.fullName && (
             <>
               <Route path='/register' element={<Register />} />
               <Route path='/login' element={<Login />} />
             </>
           )}
-          {user.name && (
+          {user.fullName && (
             <>
               <Route path='/me' element={<Profile />} />
               <Route path='/create' element={<CreateProduct />} />
               <Route path='/my-products' element={<MyProducts />} />
               <Route path='/my-orders' element={<MyOrders />} />
-              <Route path='/shipping' element={<Shipping />} />
+              <Route path='/shipping' element={<ShippingDetails />} />
+              <Route path='/place-order' element={<PlaceOrder />} />
             </>
           )}
 

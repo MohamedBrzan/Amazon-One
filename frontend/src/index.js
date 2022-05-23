@@ -8,13 +8,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import store from './store/store';
 import { BrowserRouter } from 'react-router-dom';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <HelmetProvider>
       <BrowserRouter>
-        <App />
+        <PayPalScriptProvider >
+          <App />
+        </PayPalScriptProvider>
       </BrowserRouter>
     </HelmetProvider>
   </Provider>

@@ -74,7 +74,9 @@ const deleteUserCart = async () => {
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
-    user: localStorage.getItem('user') ? localStorage.getItem('user') : {},
+    user: localStorage.getItem('user')
+      ? JSON.parse(localStorage.getItem('user'))
+      : null,
   },
   reducers: {
     userInfo: (state, action) => {
@@ -90,15 +92,10 @@ export const userSlice = createSlice({
       });
     },
     logout: (state, action) => {
-      state.user = {};
-      localStorage.setItem('user', JSON.stringify(state.user));
+      localStorage.setItem('user', JSON.stringify({}));
       localStorage.setItem('cartItems', JSON.stringify([]));
       localStorage.setItem('productInfo', JSON.stringify({}));
-      window.location.href = '/';
-      toast.error('Logout Successful', {
-        position: 'top-right',
-        autoClose: 1000,
-      });
+      window.location.href = '/login';
     },
   },
 });
@@ -207,14 +204,13 @@ export const cartSlice = createSlice({
       );
       if (findItemIndex !== -1) {
         cartItems.splice(findItemIndex, 1);
+        deleteItemFromUserCart(product.slug);
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        toast.success('Removed Item Successful', {
+          position: 'top-right',
+          autoClose: 1000,
+        });
       }
-      deleteItemFromUserCart(product.slug);
-
-      localStorage.setItem('cartItems', JSON.stringify(cartItems));
-      toast.success('Removed Item Successful', {
-        position: 'top-right',
-        autoClose: 1000,
-      });
     },
     removeAllCart: (state) => {
       state.cartItems = [];

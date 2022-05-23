@@ -3,12 +3,11 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './Login.css';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { login } from '../../store/reducers/reducers';
 import { toast } from 'react-toastify';
-import ErrorMessage from '../../utils/ErrorMessage';
 import ServerErrorMessage from '../../utils/ServerErrorMessage';
 import PageTitle from '../../utils/PageTitle';
 
@@ -20,17 +19,17 @@ const Login = () => {
   const handleLogin = async (e) => {
     try {
       e.preventDefault();
-      await axios({
+      const { data } = await axios({
         method: 'post',
         url: '/api/v1/user/login',
         data: { email, password },
-      }).then((res) => {
-        dispatch(login(res.data.user));
-        localStorage.setItem('cartItems', JSON.stringify(res.data.user.cart));
       });
+      dispatch(login(data.user));
+      localStorage.setItem('cartItems', JSON.stringify(data.user.cart));
+      localStorage.setItem('token', JSON.stringify(data.token));
+
       window.location.href = '/';
     } catch (error) {
-      <ErrorMessage variant='danger'>{error.message}</ErrorMessage>;
       toast.error(ServerErrorMessage(error), {
         position: 'top-right',
         autoClose: 1000,

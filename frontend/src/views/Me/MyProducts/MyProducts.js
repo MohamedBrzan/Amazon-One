@@ -8,11 +8,17 @@ import { toast } from 'react-toastify';
 import ServerErrorMessage from '../../../utils/ServerErrorMessage';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { getProduct, userInfo } from '../../../store/reducers/reducers';
-import { useDispatch } from 'react-redux';
+import {
+  getProduct,
+  removeItem,
+  userInfo,
+} from '../../../store/reducers/reducers';
+import { useDispatch, useSelector } from 'react-redux';
 
 const MyProducts = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useSelector((state) => state.user);
+
+  const { cartItems } = useSelector((state) => state.cart);
 
   const dispatch = useDispatch();
 
@@ -33,7 +39,7 @@ const MyProducts = () => {
   return (
     <Container className='product-container mt-5'>
       <Row>
-        {user.name ? (
+        {user.products.length > 0 ? (
           user.products.map((product, index) => (
             <Col
               key={index}
@@ -54,14 +60,20 @@ const MyProducts = () => {
               <div
                 className='delete-btn'
                 title='Delete'
-                onClick={() => deleteProduct(product.slug)}
+                onClick={() => {
+                  deleteProduct(product.slug);
+                  dispatch(removeItem(product));
+                }}
               >
                 <i className='fa-solid fa-trash'></i>
               </div>
             </Col>
           ))
         ) : (
-          <ErrorMessage variant='danger'>User Not Found</ErrorMessage>
+          <ErrorMessage>
+            No Products Found Yet .{' '}
+            <Link to='/create'>create your First product</Link>
+          </ErrorMessage>
         )}
       </Row>
     </Container>

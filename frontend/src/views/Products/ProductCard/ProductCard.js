@@ -7,7 +7,7 @@ import Card from 'react-bootstrap/Card';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useSelector((state) => state.user);
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
           <Button
             variant='warning'
             onClick={() => {
-              if (user.name) {
+              if (user.fullName) {
                 return dispatch(addToCart(product));
               } else {
                 return (window.location.href = '/login');

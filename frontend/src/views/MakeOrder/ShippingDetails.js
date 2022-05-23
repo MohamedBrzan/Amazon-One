@@ -8,10 +8,12 @@ import ErrorMessage from '../../utils/ErrorMessage';
 import axios from 'axios';
 import { removeAllCart, userInfo } from '../../store/reducers/reducers';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import ServerErrorMessage from '../../utils/ServerErrorMessage';
 
 const Shipping = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  const [fullName, setFullName] = useState(user.name || '');
+  const { user } = useSelector((state) => state.user);
+  const [fullName, setFullName] = useState(user.fullName || '');
   const [address, setAddress] = useState(user.address || '');
   const [city, setCity] = useState(user.city || '');
   const [state, setState] = useState(user.state || '');
@@ -23,26 +25,23 @@ const Shipping = () => {
 
   const navigate = useNavigate();
 
+  const data = {
+    fullName,
+    address,
+    city,
+    state,
+    country,
+    zip,
+    phone,
+  };
+
   const sentShipping = async (e) => {
     try {
       e.preventDefault();
-      await axios({
-        method: 'post',
-        url: '/api/v1/product/shipping',
-        data: {
-          fullName,
-          address,
-          city,
-          state,
-          country,
-          zip,
-          phone,
-        },
-      }).then((response) => dispatch(userInfo(response.data.user)));
-      dispatch(removeAllCart());
-      navigate('/');
+      localStorage.setItem('shippingDetails', JSON.stringify(data));
+      navigate('/place-order');
     } catch (error) {
-      <ErrorMessage variant='danger'>{error.message}</ErrorMessage>;
+      toast.error(ServerErrorMessage(error));
     }
   };
 
@@ -53,8 +52,9 @@ const Shipping = () => {
         <Form.Group controlId='fullName' className='my-3'>
           <Form.Label>full name</Form.Label>
           <Form.Control
+            required
             name='fullName'
-            value={user.name ? user.name : fullName}
+            value={fullName}
             type='text'
             placeholder='Enter Full Name'
             onChange={(e) => setFullName(e.target.value)}
@@ -63,6 +63,7 @@ const Shipping = () => {
         <Form.Group controlId='address' className='my-3'>
           <Form.Label>address</Form.Label>
           <Form.Control
+            required
             name='address'
             value={user.address ? user.address : address}
             placeholder='Enter Your Address'
@@ -72,6 +73,7 @@ const Shipping = () => {
         <Form.Group controlId='postalCode' className='my-3'>
           <Form.Label>zipCode</Form.Label>
           <Form.Control
+            required
             name='zip'
             value={user.zip ? user.zip : zip}
             type='number'
@@ -82,6 +84,7 @@ const Shipping = () => {
         <Form.Group controlId='state'>
           <Form.Label>state</Form.Label>
           <Form.Control
+            required
             name='state'
             value={user.state ? user.state : state}
             type='text'
@@ -92,6 +95,7 @@ const Shipping = () => {
         <Form.Group controlId='country'>
           <Form.Label>country</Form.Label>
           <Form.Control
+            required
             name='country'
             value={user.country ? user.country : country}
             type='text'
@@ -102,6 +106,7 @@ const Shipping = () => {
         <Form.Group controlId='city'>
           <Form.Label>city</Form.Label>
           <Form.Control
+            required
             name='city'
             value={user.city ? user.city : city}
             type='text'
@@ -112,6 +117,7 @@ const Shipping = () => {
         <Form.Group controlId='phone' className='my-3'>
           <Form.Label>phone</Form.Label>
           <Form.Control
+            required
             name='phone'
             value={user.phone ? user.phone : phone}
             type='number'

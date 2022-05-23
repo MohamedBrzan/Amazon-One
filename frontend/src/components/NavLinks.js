@@ -9,11 +9,12 @@ import axios from 'axios';
 import ErrorMessage from '../utils/ErrorMessage';
 import ServerErrorMessage from '../utils/ServerErrorMessage';
 import { toast } from 'react-toastify';
+import Container from 'react-bootstrap/Container';
 
 const NavLinks = () => {
   const { cartItems } = useSelector((state) => state.cart);
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
 
@@ -29,7 +30,6 @@ const NavLinks = () => {
       });
       dispatch(logout());
     } catch (error) {
-      <ErrorMessage variant='danger'>{error.message}</ErrorMessage>;
       toast.error(ServerErrorMessage(error), {
         position: 'top-right',
         autoClose: 1000,
@@ -38,40 +38,41 @@ const NavLinks = () => {
   };
 
   return (
-    <Navbar bg='dark' variant='dark'>
-      <Nav>
-        {' '}
+    <Navbar bg='dark' variant='dark' expand='lg'>
+      <Container>
         <LinkContainer to='/'>
-          <Nav.Link className='navbar-brand'> AMAZON</Nav.Link>
-        </LinkContainer>{' '}
-        <LinkContainer to='/'>
-          <Nav.Link className='navbar-brand'>Home</Nav.Link>
-        </LinkContainer>{' '}
-        <LinkContainer to='/products'>
-          <Nav.Link className='navbar-brand'> Products</Nav.Link>
+          <Navbar.Brand>amazon</Navbar.Brand>
         </LinkContainer>
-        <LinkContainer to='/cart'>
-          <Nav.Link>
-            {totalLength > 0 ? (
-              <>
-                Cart <Badge pill>{totalLength}</Badge>
-              </>
-            ) : (
-              <span>Cart</span>
-            )}
-          </Nav.Link>
-        </LinkContainer>
-        <Navbar.Collapse>
-          <Nav>
+        <Navbar.Toggle aria-controls='basic-navbar-nav' />
+        <Navbar.Collapse id='basic-navbar-nav'>
+          <Nav className='me-auto'>
+            <LinkContainer to='/'>
+              <Nav.Link>Home</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to='/products'>
+              <Nav.Link>products</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to='/cart'>
+              <Nav.Link>
+                {totalLength > 0 ? (
+                  <>
+                    Cart <Badge pill>{totalLength}</Badge>
+                  </>
+                ) : (
+                  <span>Cart</span>
+                )}
+              </Nav.Link>
+            </LinkContainer>
+
             <NavDropdown
-              title={user.name ? user.name : 'user'}
+              title={user.fullName ? user.fullName : 'user'}
               menuVariant='dark'
             >
-              {user.name && (
+              {user.fullName && (
                 <>
                   <LinkContainer to='/me'>
                     <NavDropdown.Item>profile</NavDropdown.Item>
-                  </LinkContainer>{' '}
+                  </LinkContainer>
                   <LinkContainer to='/create'>
                     <NavDropdown.Item>create</NavDropdown.Item>
                   </LinkContainer>
@@ -84,7 +85,7 @@ const NavLinks = () => {
                   <NavDropdown.Divider />
                 </>
               )}
-              {user.name ? (
+              {user.fullName ? (
                 <NavDropdown.Item onClick={loggingOut}>logout</NavDropdown.Item>
               ) : (
                 <LinkContainer to='/login'>
@@ -94,7 +95,7 @@ const NavLinks = () => {
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
-      </Nav>
+      </Container>
     </Navbar>
   );
 };

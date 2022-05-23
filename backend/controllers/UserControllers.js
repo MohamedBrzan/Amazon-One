@@ -1,11 +1,24 @@
 const Asynchronous = require('../middleWares/Asynchronous');
 const ErrorHandler = require('../middleWares/ErrorHandler');
+const Product = require('../models/Product');
 const User = require('../models/User');
 const SendToken = require('../utils/SendToken');
 
 // Register
 exports.register = Asynchronous(async (req, res, next) => {
-  const { avatar, name, email, password, reenterPassword } = req.body;
+  const {
+    avatar,
+    fullName,
+    email,
+    password,
+    reenterPassword,
+    address,
+    state,
+    country,
+    city,
+    zip,
+    phone,
+  } = req.body;
 
   let user = await User.findOne({ email }).select('+password');
 
@@ -14,7 +27,18 @@ exports.register = Asynchronous(async (req, res, next) => {
   if (password !== reenterPassword)
     return next(new ErrorHandler('Password Does Not Match', 401));
 
-  user = await User.create({ avatar, name, email, password });
+  user = await User.create({
+    avatar,
+    fullName,
+    email,
+    password,
+    address,
+    state,
+    country,
+    city,
+    zip,
+    phone,
+  });
 
   SendToken(res, 201, user);
 });
@@ -28,6 +52,7 @@ exports.login = Asynchronous(async (req, res, next) => {
     .populate({
       path: 'cart.product',
     })
+
     .populate('products');
 
   if (!user) return next(new ErrorHandler('User Does Not Exist', 401));
@@ -52,9 +77,12 @@ exports.IsLoggedIn = Asynchronous(async (req, res, next) => {
 
   if (!token) return next(new ErrorHandler('Unauthorized', 401));
 
-  const user = await User.findOne({ token }).populate({
-    path: 'cart.product',
-  });
+  const user = await User.findOne({ token })
+    .populate({
+      path: 'cart.product',
+    })
+
+    .populate('products');
 
   if (!user) return next(new ErrorHandler('Unauthorized', 401));
 
@@ -63,14 +91,24 @@ exports.IsLoggedIn = Asynchronous(async (req, res, next) => {
 
 // Get All Users
 exports.getAllUsers = Asynchronous(async (req, res, next) => {
-  const users = await User.find();
+  const users = await User.find()
+    .populate({
+      path: 'cart.product',
+    })
+
+    .populate('products');
 
   res.json(users);
 });
 
 // Get User
 exports.getUser = Asynchronous(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+
+    .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 404));
 
@@ -79,9 +117,12 @@ exports.getUser = Asynchronous(async (req, res, next) => {
 
 // User Cart
 exports.userCart = Asynchronous(async (req, res, next) => {
-  const user = await User.findById(req.user._id).populate({
-    path: 'cart.product',
-  });
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
+
+    .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));
 
@@ -94,6 +135,7 @@ exports.deleteUserCart = Asynchronous(async (req, res, next) => {
     .populate({
       path: 'cart.product',
     })
+
     .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));

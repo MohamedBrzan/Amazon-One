@@ -42,7 +42,7 @@ const Cart = () => {
         <Col lg={8} className='mb-5'>
           {cartItems.length > 0 ? (
             <>
-              <Table striped bordered hover className='text-center'>
+              <Table striped bordered hover responsive className='text-center'>
                 <thead>
                   <tr>
                     <th>Product</th>

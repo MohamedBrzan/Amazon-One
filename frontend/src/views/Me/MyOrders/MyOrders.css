@@ -1,0 +1,14 @@
+.text-font-size {
+  font-size: 1rem;
+}
+
+.product-text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0 0 0 5px;
+}
+
+.order-img {
+  width: 100px;
+}/*# sourceMappingURL=MyOrders.css.map */

@@ -19,3 +19,4 @@
 13. create user profile page
 14. create user products page
 15. create shipping page
+16. handle order and paypal payment

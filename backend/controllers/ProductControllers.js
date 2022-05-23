@@ -1,5 +1,6 @@
 const Asynchronous = require('../middleWares/Asynchronous');
 const ErrorHandler = require('../middleWares/ErrorHandler');
+const Order = require('../models/Order');
 const Product = require('../models/Product');
 const User = require('../models/User');
 
@@ -24,14 +25,27 @@ exports.createProduct = Asynchronous(async (req, res, next) => {
     images,
   } = req.body;
 
-  const owner = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id)
+    .populate({
+      path: 'cart.product',
+    })
 
-  let product = await Product.findOne({ slug });
+    .populate('products');
 
-  if (product) return next(new ErrorHandler('Product already exists', 400));
+  if (!user) return next(new ErrorHandler('User not found', 404));
 
-  product = await Product.create({
-    owner,
+  const product = await Product.findOne({ slug });
+
+  if (product)
+    return next(
+      new ErrorHandler(
+        'Product already exists please change the slug name',
+        400
+      )
+    );
+
+  await Product.create({
+    owner: user,
     name,
     brand,
     code,
@@ -42,9 +56,10 @@ exports.createProduct = Asynchronous(async (req, res, next) => {
     price,
     images,
   }).then(async (product) => {
-    owner.products.push(product);
-    await owner.save();
-    res.status(200).json({ success: true, product });
+    user.products.push(product._id);
+    await user.save();
+
+    return res.status(200).json({ success: true, product });
   });
 });
 
@@ -75,6 +90,7 @@ exports.updateProduct = Asynchronous(async (req, res, next) => {
     .populate({
       path: 'cart.product',
     })
+
     .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 404));
@@ -148,6 +164,7 @@ exports.deleteProduct = Asynchronous(async (req, res, next) => {
     .populate({
       path: 'cart.product',
     })
+
     .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));
@@ -156,7 +173,19 @@ exports.deleteProduct = Asynchronous(async (req, res, next) => {
 
   if (!product) return next(new ErrorHandler('Product not found', 404));
 
-  user.products.pull(product._id);
+  // find product in user's products
+  user.products.forEach((item) => {
+    if (item._id.toString() === product._id.toString()) {
+      user.products.pull(item);
+    }
+  });
+
+  // find product in cart
+  user.cart.forEach((item) => {
+    if (item.product._id.toString() === product._id.toString()) {
+      user.cart.pull(item);
+    }
+  });
 
   await user.save();
 
@@ -173,6 +202,7 @@ exports.addToCartAndIncreaseQuantity = Asynchronous(async (req, res, next) => {
     .populate({
       path: 'cart.product',
     })
+
     .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));
@@ -204,6 +234,7 @@ exports.addToCartAndIncreaseQuantity = Asynchronous(async (req, res, next) => {
     });
   } else {
     user.cart.push({
+      _id: product._id,
       product,
       quantity: quantity ? quantity : 1,
       totalAmount: quantity ? product.price * quantity : product.price,
@@ -228,6 +259,7 @@ exports.addToCartAndDecreaseQuantity = Asynchronous(async (req, res, next) => {
     .populate({
       path: 'cart.product',
     })
+
     .populate('products');
   if (!user) return next(new ErrorHandler('Please Login First', 500));
 
@@ -265,6 +297,7 @@ exports.removeFromCart = Asynchronous(async (req, res, next) => {
     .populate({
       path: 'cart.product',
     })
+
     .populate('products');
 
   if (!user) return next(new ErrorHandler('Please Login First', 500));
@@ -284,46 +317,4 @@ exports.removeFromCart = Asynchronous(async (req, res, next) => {
   await user.save();
 
   res.json({ success: true, message: 'Product removed from cart', user });
-});
-
-// Get Shipping Products
-exports.shippingProducts = Asynchronous(async (req, res, next) => {
-  const user = await User.findById(req.user._id)
-    .populate({
-      path: 'cart.product',
-    })
-    .populate('products');
-
-  if (!user) return next(new ErrorHandler('Please Login First', 500));
-
-  const cartProducts = user.cart.map((item) => item.product);
-
-  if (!cartProducts.length)
-    return next(new ErrorHandler('No products in cart', 404));
-
-  const { fullName, address, city, state, zip, country, phone } = req.body;
-
-  const products = user.cart;
-
-  user.shipping.push({
-    fullName,
-    address,
-    city,
-    state,
-    zip,
-    country,
-    phone,
-    shippingItems: products,
-  });
-
-  user.cart = [];
-
-  await user.save();
-
-  res.json({
-    success: true,
-    message: 'Shipping data added',
-    shipping: user.shipping,
-    user,
-  });
 });

@@ -6,10 +6,10 @@ const validator = require('validator');
 const UserSchema = new mongoose.Schema(
   {
     avatar: { type: String, required: [true, 'Please Provide A Avatar'] },
-    name: {
+    fullName: {
       type: String,
       minlength: [3, 'Name Must Be At Least 3 Characters'],
-      required: [true, 'Please provide a name'],
+      required: [true, 'Please provide a fullName'],
       trim: true,
       lowercase: true,
     },
@@ -25,52 +25,41 @@ const UserSchema = new mongoose.Schema(
       required: [true, 'Please Provide A Password'],
     },
 
-    shipping: [
-      {
-        fullName: {
-          type: String,
-          required: [true, 'Please Provide An fullName'],
-          trim: true,
-          lowercase: true,
-        },
-        address: {
-          type: String,
-          required: [true, 'Please Provide An Address'],
-          trim: true,
-          lowercase: true,
-        },
-        state: {
-          type: String,
-          required: [true, 'Please Provide A State'],
-          trim: true,
-          lowercase: true,
-        },
-        country: {
-          type: String,
-          required: [true, 'Please Provide A Country'],
-          trim: true,
-          lowercase: true,
-        },
-        city: {
-          type: String,
-          required: [true, 'Please Provide A City'],
-          trim: true,
-          lowercase: true,
-        },
-        zip: {
-          type: Number,
-          required: [true, 'Please Provide A Zip'],
-          trim: true,
-        },
-        phone: {
-          type: String,
-          required: [true, 'Please Provide A Phone'],
-          trim: true,
-          lowercase: true,
-        },
-        shippingItems: [],
-      },
-    ],
+    address: {
+      type: String,
+      required: [true, 'Please Provide An Address'],
+      trim: true,
+      lowercase: true,
+    },
+    state: {
+      type: String,
+      required: [true, 'Please Provide A State'],
+      trim: true,
+      lowercase: true,
+    },
+    country: {
+      type: String,
+      required: [true, 'Please Provide A Country'],
+      trim: true,
+      lowercase: true,
+    },
+    city: {
+      type: String,
+      required: [true, 'Please Provide A City'],
+      trim: true,
+      lowercase: true,
+    },
+    zip: {
+      type: Number,
+      required: [true, 'Please Provide A Zip'],
+      trim: true,
+    },
+    phone: {
+      type: String,
+      required: [true, 'Please Provide A Phone Number'],
+      trim: true,
+      lowercase: true,
+    },
 
     products: [
       {

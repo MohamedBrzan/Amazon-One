@@ -38,4 +38,12 @@
   position: absolute;
   top: 50%;
   cursor: pointer;
+}
+.register ::-webkit-inner-spin-button,
+.register ::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.register input[type=number] {
+  -moz-appearance: textfield;
 }/*# sourceMappingURL=Register.css.map */
